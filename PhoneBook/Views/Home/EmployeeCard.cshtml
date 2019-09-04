@@ -1,0 +1,28 @@
+﻿
+@{
+    string fullname = ViewBag.Employee.FullName;
+    string phone = ViewBag.Employee.PhoneNumber;
+    string email = ViewBag.Employee.Email;
+    string thumbnail = ViewBag.Employee.ThumbnailURL;
+    string photo = ViewBag.Employee.PhotoURL;
+}
+<div class="row top-buffer">
+    <div class="col-md-12">
+        <h2>Employee Card</h2>
+    </div>
+</div>
+<div class="row top-buffer">
+    <div class="col-md-2">
+        <a href="@photo" data-fancybox data-caption="This image has a simple caption">
+            <img src="@photo" />
+        </a>
+    </div>
+    <div class="col-md-10">
+        <h2>@fullname</h2>
+        <p>
+            <span class="dx-icon-tel"></span> Phone: @phone
+            <span class="dx-icon-email"></span> E-mail: @email
+        </p>
+    </div>
+</div>
+

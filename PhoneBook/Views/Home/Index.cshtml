@@ -1,0 +1,95 @@
+﻿@using PhoneBook.Core.Enums;
+
+@{
+    ViewBag.Title = "Employees";
+}
+<div class="row">
+    <div class="col-md-2">
+        <h2>Employees</h2>
+    </div>
+    <div class="col-md-10 top-buffer">
+        <div class="col-md-offset-2 col-md-2">
+            @(Html.DevExtreme().TextBox()
+                .ShowClearButton(true)
+                .Placeholder("Name")
+                .ValueChangeEvent("change")
+                .OnValueChanged("applyFilterByName")
+            )
+        </div>
+        <div class="col-md-2">
+            @(Html.DevExtreme().DateBox()
+                .Type(DateBoxType.Date)
+                .Placeholder("Date Of Birth")
+                .ValueChangeEvent("change")
+                .OnValueChanged("applyFilterByDateOfBirth")
+            )
+        </div>
+        <div class="col-md-3">
+            @{ var defaultSortTypeValue = 0; }
+
+            @(Html.DevExtreme().SelectBox()
+                .DataSource(EnumHelper.GetSelectList(typeof(SortTypes))
+                    .Select(i => new { Value = int.Parse(i.Value), Text = i.Text })
+                )
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+                .Value(defaultSortTypeValue)
+                .OnValueChanged("applySorting")
+            )
+        </div>
+        <div class="col-md-3">
+            <div class="pull-right">
+                @(Html.DevExtreme().Button()
+                    .Text("Load From Randomuser.me")
+                    .Type(ButtonType.Normal)
+                    .StylingMode(ButtonStylingMode.Contained)
+                    .OnClick("loadUsers")
+                )
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        @(Html.DevExtreme().DataGrid()
+            .ID("gridContainer")
+            .DataSource(d => d.WebApi()
+                .RouteName("EmployeesApi")
+                .LoadAction("Get")
+                .Key("Id")
+            )
+            .RemoteOperations(true)
+            .Columns(columns =>
+            {
+                columns.Add()
+                    .DataField("ThumbnailURL")
+                    .CellTemplate(
+                        @<text>
+                            <div><img src="<%- value %>" /></div>
+                        </text>
+                     )
+                     .Width(65);
+
+                 columns.Add()
+                     .DataField("FullName")
+                     .CellTemplate(
+                        @<text>
+                            <a href="@Url.Action("EmployeeCard")/<%= data.Id %>"><%- value %></a>
+                        </text>
+                     )
+                     .Caption("Employee");
+
+                 columns.Add()
+                     .DataField("DateOfBirth")
+                     .DataType(GridColumnDataType.Date)
+                     .Caption("Date Of birth");
+            })
+        )
+    </div>
+</div>
+<div id="loader"><img src="~/Content/images/loader.gif" /></div>
+<div id="shadow"></div>
+
+@Scripts.Render("~/Scripts/loadUsers.js")
+@Scripts.Render("~/Scripts/DevExtremeDataSourceMapper.js")
+@Scripts.Render("~/Scripts/DevExtremeUtils.js")
